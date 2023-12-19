@@ -54,8 +54,8 @@ class ArtHouse {
                 });
 
                 return Promise.resolve(
-                    document.body
-                        .animate([], { duration: Math.abs(dur) })
+                    this.root
+                        .animate([/* dummy, empty */], { duration: Math.abs(dur) })
                         .finished.then((e) => {
                             // set currentTime to the exact value
                             currentTime += dur;
@@ -64,9 +64,29 @@ class ArtHouse {
                                 // synchronize currentTime
                                 animation.currentTime = currentTime;
                             });
+
+                            // not reached if dur = Infinty
+                            e.cancel();
+
                             return currentTime;
                         }));
             });
+    }
+
+    // function pause()
+    pause() {
+        let currentTime = 0;
+        const animations = this.animations;
+        
+        return Promise.resolve({
+            then(onFulfilled) {
+                animations.forEach((animation) => {
+                    animation.pause();
+                    currentTime = Math.max(animation.currentTime, currentTime);
+                });
+                onFulfilled(currentTime);
+            }
+        });
     }
 
     // function tween(element, ...args) 
@@ -77,7 +97,7 @@ class ArtHouse {
         const tweens = args.pop();
         const pseudoElement = args.pop();   // could be null
 
-        const options = { duration: 0, pseudoElement: pseudoElement, fill: 'forwards' };
+        const options = { duration: 0, pseudoElement: pseudoElement, fill: 'forwards', endDelay: 864000000 };
         const keyFrames = [];
 
         Object
@@ -163,7 +183,7 @@ class ArtHouse {
                         timing.delay += time;
                         duration = Math.max(duration, timing.duration);
                         anim.effect.updateTiming(timing);
-                        anim.id = label;
+                        anim.id = label ?? anim.id;
                         label = null;
 
                         animations.push(anim);
@@ -177,7 +197,7 @@ class ArtHouse {
                     timing.delay += time;
                     time += timing.duration;
                     arrOrAnimOrStr.effect.updateTiming(timing);
-                    arrOrAnimOrStr.id = label;
+                    arrOrAnimOrStr.id = label ?? arrOrAnimOrStr.id;
                     label = null;
 
                     animations.push(arrOrAnimOrStr);

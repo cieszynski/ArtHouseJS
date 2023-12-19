@@ -6,12 +6,102 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        #artbox {
+            width: 400px;
+            height: 300px;
+            outline: 1px solid black;
+            position: relative;
+        }
 
-    </style>
+        .square {
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            translate: 0;
+            position: absolute;
+            opacity: 0;
+        }
+    </style><!-- 
+    <script src="https://cdn.jsdelivr.net/gh/cieszynski/ArtHouseJS@main/dist/arthouse.js"></script> -->
+    <script src="arthouse.js"></script>
 </head>
 
 <body>
     <p>ArtHouseJS</p>
+    <div id="artbox">
+        <div id="square2" class="square" style="background-color: yellow;">square2</div>
+        <div id="square1" class="square" style="background-color: red;">square1</div>
+    </div>
+    <div>
+        <button onclick="plot1.play(Infinity)">play</button>
+        <button onclick="plot1.play(7000,0)">play 0</button>
+        <button onclick="plot1.play(Infinity,1000)">play 1</button>
+        <button onclick="plot1.play(Infinity,2000)">play 2</button>
+        <button onclick="plot1.play(Infinity,'label1')">play label1</button>
+        <button onclick="plot1.play(Infinity,'label2')">play label2</button>
+        <button onclick="plot1.pause().then((x)=>console.log(x))">pause</button>
+    </div>
+
+    <script>
+        const plot1 = new ArtHouse(artbox);
+        plot1.sequence(0,
+            plot1.tween(square2, {
+                0: {
+                    opacity: 0
+                },
+                1000: {
+                    opacity: 1
+                },
+            }),
+            plot1.tween(square1, {
+                0: {
+                    opacity: 0
+                },
+                1000: {
+                    opacity: 1
+                },
+            }),
+            'label1',
+            plot1.sequence(0,
+                plot1.tween(square1, {
+                    0: {
+                        translate: 0
+                    },
+                    1000: {
+                        translate: '100px 0'
+                    },
+                }),
+                plot1.tween(square2, {
+                    0: {
+                        translate: 0
+                    },
+                    1000: {
+                        translate: '100px 0'
+                    },
+                }),
+                'label2',
+                plot1.tween(square1, {
+                    0: {
+                        translate: '100px 0'
+                    },
+                    1000: {
+                        translate: '100px 100px'
+                    },
+                }),
+                plot1.tween(square2, {
+                    0: {
+                        translate: '100px 0'
+                    },
+                    1000: {
+                        translate: 0
+                    },
+                }),
+            )
+        )
+
+        // plot1.play(3000)
+    </script>
 </body>
 
 </html>
